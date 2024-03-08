@@ -9,6 +9,4 @@ data class MovieResponse(
     val Title: String,
     val Year: String,
     @Json(name = "Poster") val Poster: String,
-
-
 )
