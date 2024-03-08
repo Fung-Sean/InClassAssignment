@@ -11,6 +11,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+
+
 const val TAG = "sussy"
 class MainActivity : AppCompatActivity() {
     private lateinit var movieAPI: MovieAPI
@@ -19,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        movieAPI = RetrofitClient.apiCall
+        movieAPI = RetrofitClient.movieAPI
 
         findViewById<Button>(R.id.submitButton).setOnClickListener {
             val movieTitle = findViewById<EditText>(R.id.movieInputEditText).text.toString()
@@ -33,11 +36,19 @@ class MainActivity : AppCompatActivity() {
     private fun searchMovie(title: String) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                // Make API call with the provided movie title
-                val movieResponse = movieAPI.getMovieDetails(title)
+                Log.d(TAG, "TRYING API")
+                // Make API call to search for movies based on the title
+                val movieResponse = movieAPI.searchMovies(title)
 
-                // Handle the movie response
-                Log.d("sussy","Title: ${movieResponse.title}, Year: ${movieResponse.year}")
+                // Get the first movie from the search results
+                val firstMovie = movieResponse.search.firstOrNull()
+
+                // Handle the first movie
+                if (firstMovie != null) {
+                    Log.d("sussy","Title: ${firstMovie.title}, Year: ${firstMovie.year}, Url: ${firstMovie.poster}\")")
+                } else {
+                    Log.d("sussy", "No movies found")
+                }
             } catch (e: Exception) {
                 // Handle errors
                 println("Error: ${e.message}")
@@ -49,12 +60,14 @@ class MainActivity : AppCompatActivity() {
 object RetrofitClient {
     private const val BASE_URL = "http://www.omdbapi.com/"
 
-    private val moshi = Moshi.Builder().build()
+    val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
 
     val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 
-    val apiCall = retrofit.create(MovieAPI::class.java)
+    val movieAPI = retrofit.create(MovieAPI::class.java)
 }
