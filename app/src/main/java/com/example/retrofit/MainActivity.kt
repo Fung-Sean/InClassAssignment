@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import coil.load
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                 // Handle the first movie
                 if (firstMovie != null) {
                     Log.d("sussy","Title: ${firstMovie.title}, Year: ${firstMovie.year}, Url: ${firstMovie.poster}\")")
+                    updateUI(firstMovie)
                 } else {
                     Log.d("sussy", "No movies found")
                 }
@@ -54,6 +58,12 @@ class MainActivity : AppCompatActivity() {
                 println("Error: ${e.message}")
             }
         }
+    }
+
+    private fun updateUI(firstMovie: Movie) {
+        findViewById<ImageView>(R.id.movieImageView).load(firstMovie.poster)
+        findViewById<TextView>(R.id.yearReleasedTextView).text = firstMovie.year
+        findViewById<TextView>(R.id.titleTextView).text = firstMovie.title
     }
 }
 
