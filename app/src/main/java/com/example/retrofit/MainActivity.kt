@@ -2,6 +2,7 @@ package com.example.retrofit
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.squareup.moshi.Moshi
@@ -10,7 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-
+const val TAG = "sussy"
 class MainActivity : AppCompatActivity() {
     private lateinit var movieAPI: MovieAPI
 
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.submitButton).setOnClickListener {
             val movieTitle = findViewById<EditText>(R.id.movieInputEditText).text.toString()
             if (movieTitle.isNotEmpty()) {
+                Log.d(TAG, "movie title" + movieTitle)
                 searchMovie(movieTitle)
             }
         }
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
                 val movieResponse = movieAPI.getMovieDetails(title)
 
                 // Handle the movie response
-                println("Title: ${movieResponse.title}, Year: ${movieResponse.year}")
+                Log.d("sussy","Title: ${movieResponse.title}, Year: ${movieResponse.year}")
             } catch (e: Exception) {
                 // Handle errors
                 println("Error: ${e.message}")
